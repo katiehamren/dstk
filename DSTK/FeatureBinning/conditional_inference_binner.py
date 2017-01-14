@@ -1,5 +1,6 @@
 from __future__ import division
 import numpy as np
+import pandas as pd
 import scipy.stats as st
 from DSTK.FeatureBinning.base_binner import BaseBinner
 from DSTK.FeatureBinning._utils import _naive_bayes_bins, _filter_special_values
@@ -82,6 +83,9 @@ class ConditionalInferenceBinner(BaseBinner):
         :param kwargs: supports all keywords of an sklearn.DecisionTreeClassifier
         :return: self with fitted bins.
         """
+
+        values = values.values if hasattr(values, "values") else values
+        targets = targets.values if hasattr(targets, "values") else targets
 
         assert (values is not None) & (values != []), "feature_values cannot be None or empty"
         assert (targets is not None) & (targets != []), "target_values cannot be None or empty"
