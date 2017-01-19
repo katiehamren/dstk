@@ -65,6 +65,7 @@ class ConditionalInferenceBinner(BaseBinner):
         self.min_samples_split = kwargs.get('min_samples_split', 2)
         self.min_samples_leaf = kwargs.get('min_samples_leaf', 2)
         self.special_values = kwargs.get('special_values', [np.NaN])
+        self.special_value_treatment = kwargs.get('special_value_treatment', None)
 
         self.num_classes = None
 
@@ -74,9 +75,13 @@ class ConditionalInferenceBinner(BaseBinner):
 
         self._is_fit = False
 
+        assert self.special_value_treatment in [None, 'combine'], "Invalid special value treatment"
+
     def fit(self, values, targets):
         """
-        Fits the binner. It turns the leaves into non-equidistant bin cond_proba_buckets and calculates the frequentist's probability of a feature having a certain label and being in a certain bin. Note that it can handle NaN by assigning it its own range.
+        Fits the binner. It turns the leaves into non-equidistant bin cond_proba_buckets and calculates the
+        frequentist's probability of a feature having a certain label and being in a certain bin.
+        Note that it can handle NaN by assigning it its own range.
 
         :param feature_values: list or array of the feature values (potentially containing NaN)
         :param target_values: list or array of the corresponding labels
@@ -109,8 +114,12 @@ class ConditionalInferenceBinner(BaseBinner):
         else:
             prior = None
 
-        for val in self.special_values:
-            self.add_bin(val, _naive_bayes_bins(targets[special_vals_idx[str(val)]], prior))
+        if self.special_value_treatment == 'combine':
+            self.add_bin(np.nan, _naive_bayes_bins(targets[np.concatenate([special_vals_idx[str(k)]
+                                                                           for k in self.special_values])], prior))
+        else:
+            for val in self.special_values:
+                self.add_bin(val, _naive_bayes_bins(targets[special_vals_idx[str(val)]], prior))
 
         self.is_fit = True
         return self
