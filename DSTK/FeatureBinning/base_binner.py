@@ -22,6 +22,14 @@ class BaseBinner(object):
     def values(self, values):
         raise NotImplementedError
 
+    @abc.abstractproperty
+    def counts(self, counts):
+        raise NotImplementedError
+
+    @counts.setter
+    def counts(self):
+        raise NotImplementedError
+
     @abc.abstractmethod
     def fit(self, values, targets):
         raise NotImplementedError
@@ -82,6 +90,10 @@ class BaseBinner(object):
         self.values = np.insert(self.values, [idx], bin_value, axis=0).tolist()
 
         return self
+
+    def _set_counts(self, values):
+        binned_values = np.digitize(values, self.splits, right=True)
+        self._counts = [(binned_values == bv).sum() for bv in range(len(self.splits))]
 
     def __str__(self):
         return self.__repr__()

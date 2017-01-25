@@ -1,6 +1,7 @@
 from __future__ import division
 import numpy as np
 import pandas as pd
+import pdb
 import scipy.stats as st
 from DSTK.FeatureBinning.base_binner import BaseBinner
 from DSTK.FeatureBinning._utils import _naive_bayes_bins, _filter_special_values
@@ -43,6 +44,10 @@ class ConditionalInferenceBinner(BaseBinner):
         return self._splits
 
     @property
+    def counts(self):
+        return self._counts
+
+    @property
     def is_fit(self):
         return self._is_fit
 
@@ -53,6 +58,10 @@ class ConditionalInferenceBinner(BaseBinner):
     @splits.setter
     def splits(self, splits):
         self._splits = splits
+
+    @counts.setter
+    def counts(self, counts):
+        self._counts = counts
 
     @is_fit.setter
     def is_fit(self, is_fit):
@@ -71,6 +80,7 @@ class ConditionalInferenceBinner(BaseBinner):
 
         self._splits = [np.PINF]
         self._values = list()
+        self._counts = list()
         self.nodes = list()
 
         self._is_fit = False
@@ -122,6 +132,8 @@ class ConditionalInferenceBinner(BaseBinner):
                 self.add_bin(val, _naive_bayes_bins(targets[special_vals_idx[str(val)]], prior))
 
         self.is_fit = True
+        self._set_counts(values)
+
         return self
 
     def _calculate_conditional_probas(self, values, targets):

@@ -2,6 +2,7 @@ import sklearn.datasets as ds
 from DSTK.FeatureBinning.conditional_inference_binner import ConditionalInferenceBinner
 import numpy as np
 import pandas as pd
+import pdb
 
 cancer_ds = ds.load_breast_cancer()
 cancer_data = cancer_ds['data']
@@ -33,6 +34,7 @@ def test_recursion():
                              [0.81481481481481477, 0.18518518518518517],
                              [0.99152542372881358, 0.0084745762711864406],
                              [0.37258347978910367, 0.62741652021089633]])
+    np.testing.assert_equal(cib.counts, [150, 115, 132, 54, 118, 0])
 
 
 def test_string_repr():
@@ -91,6 +93,7 @@ def test_recursion_with_nan():
                              [0.83333333333333337, 0.16666666666666666],
                              [0.99145299145299148, 0.0085470085470085479],
                              [0.2608695652173913, 0.73913043478260865]])
+    np.testing.assert_equal(cib.counts, [195, 82, 104, 48, 117, 23])
 
 
 def test_recursion_with_nan_and_special_value():
@@ -114,3 +117,4 @@ def test_recursion_with_nan_and_special_value():
                              [0.8205128205128205, 0.1794871794871795],
                              [1.0, 0.0],
                              [0.23809523809523808, 0.7619047619047619]])
+    np.testing.assert_equal(cib.counts, [29, 185, 97, 83, 39, 115, 21])

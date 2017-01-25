@@ -108,6 +108,10 @@ class DecisionTreeBinner(BaseBinner):
     def splits(self):
         return self._splits
 
+    @property
+    def counts(self):
+        return self._counts
+
     @is_fit.setter
     def is_fit(self, is_fit):
         self._is_fit = is_fit
@@ -119,6 +123,10 @@ class DecisionTreeBinner(BaseBinner):
     @splits.setter
     def splits(self, splits):
         self._splits = splits
+
+    @counts.setter
+    def counts(self, counts):
+        self._counts = counts
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -157,6 +165,7 @@ class DecisionTreeBinner(BaseBinner):
 
         self._splits = [np.PINF]
         self._values = list()
+        self._counts = list()
 
     def fit(self, values, target):
         """
@@ -188,6 +197,9 @@ class DecisionTreeBinner(BaseBinner):
         :return: Nothing, but sets the self.cond_proba_buckets field
         """
 
+        values = values.values if hasattr(values, "values") else values
+        target = target.values if hasattr(target, "values") else target
+
         assert (values is not None) & (values != []), "feature_values cannot be None or empty"
         assert (target is not None) & (target != []), "target_values cannot be None or empty"
         assert len(values) == len(target), "feature_values and target_values must have same length"
@@ -217,4 +229,6 @@ class DecisionTreeBinner(BaseBinner):
         self._splits.append(np.NaN)
         self._values.append(_process_nan_values(values, target, prior))
         self.is_fit = True
+        self._set_counts(values)
+
         return self

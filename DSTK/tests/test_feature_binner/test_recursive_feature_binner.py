@@ -1,7 +1,7 @@
 import sklearn.datasets as ds
 import numpy as np
 from DSTK.FeatureBinning import decision_tree_binner as tfb
-
+import pdb
 cancer_ds = ds.load_breast_cancer()
 data = cancer_ds['data']
 target = cancer_ds['target']
@@ -17,6 +17,7 @@ def test_recursion():
                                             [0.8148148148148148, 0.18518518518518517],
                                             [0.9915254237288136, 0.00847457627118644],
                                             [0.37258347978910367, 0.62741652021089633]])
+    np.testing.assert_equal(binner.counts, [265, 132, 54, 118, 0])
 
 
 def test_recursion_with_mdlp():
@@ -29,6 +30,7 @@ def test_recursion_with_mdlp():
                                             [0.8533333333333334, 0.14666666666666667],
                                             [1.0, 0.0],
                                             [0.37258347978910367, 0.62741652021089633]])
+    np.testing.assert_equal(binner.values, [265, 132, 75, 97, 0])
 
 
 def test_str_repr_with_mdlp():
