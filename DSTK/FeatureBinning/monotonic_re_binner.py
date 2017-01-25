@@ -53,6 +53,7 @@ class MonotonicBinner(BaseBinner):
         self._values = list(binner.values)
         self._counts = list(binner.counts)
         self._deprecated_splits = list()
+        self._special_values = list(binner.special_values)
 
         self.min_splits = kwargs.get('min_splits', 2)
         self.max_splits_to_pop = kwargs.get('max_splits_to_pop', 1)
@@ -116,9 +117,10 @@ class MonotonicBinner(BaseBinner):
 
         if len(self.splits) <= self.min_splits:
             return False
+
         sp = np.asarray(self.splits)
         vals = np.asarray(self.values)
-        diffs = np.diff(vals[np.where(np.asarray(sp) >= 0.0)[0]][:, 1])
+        diffs = np.diff(vals[np.asarray([(~np.isnan(s)) & (s not in self._special_values) for s in sp])][:, 1])
 
         if return_as == 'bool':
             return (diffs > 0).all() or (diffs < 0).all()

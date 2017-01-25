@@ -127,6 +127,7 @@ class ConditionalInferenceBinner(BaseBinner):
         if self.special_value_treatment == 'combine':
             self.add_bin(np.nan, _naive_bayes_bins(targets[np.concatenate([special_vals_idx[str(k)]
                                                                            for k in self.special_values])], prior))
+            self.special_values = [np.NaN]
         else:
             for val in self.special_values:
                 self.add_bin(val, _naive_bayes_bins(targets[special_vals_idx[str(val)]], prior))
