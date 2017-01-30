@@ -30,7 +30,7 @@ def test_recursion_with_mdlp():
                                             [0.8533333333333334, 0.14666666666666667],
                                             [1.0, 0.0],
                                             [0.37258347978910367, 0.62741652021089633]])
-    np.testing.assert_equal(binner.values, [265, 132, 75, 97, 0])
+    np.testing.assert_equal(binner.counts, [265, 132, 75, 97, 0])
 
 
 def test_str_repr_with_mdlp():
@@ -57,7 +57,6 @@ def test_fit():
 
     np.testing.assert_equal(binner.splits, [0.5, 1.5, np.PINF, np.NaN])
     np.testing.assert_equal(binner.values, [[1.0, 0.0], [0.0, 1.0], [0.5, 0.5], [0.5, 0.5]])
-
 
 def test_transform():
     feats = [0, 1, 2, np.nan, 5, np.nan]
