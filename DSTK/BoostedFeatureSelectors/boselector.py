@@ -115,6 +115,7 @@ class SGDBolasso(BaseSelector, BaseEstimator):
                  feature_importance_threshold=None,
                  alpha=0.0001,
                  fit_intercept=True,
+                 l1_ratio=1.0,
                  n_iter=5,
                  shuffle=True,
                  verbose=0,
@@ -128,8 +129,11 @@ class SGDBolasso(BaseSelector, BaseEstimator):
                  warm_start=False,
                  average=False):
 
+        print 'test'
+
         self.alpha = alpha
         self.fit_intercept = fit_intercept
+        self.l1_ratio = l1_ratio
         self.n_iter = n_iter
         self.shuffle = shuffle
         self.verbose = verbose
@@ -148,9 +152,9 @@ class SGDBolasso(BaseSelector, BaseEstimator):
         # feature set of Bolasso.
         self.sgd_logit = SGDClassifier(
             loss="log",
-            penalty='l1',
+            penalty="elasticnet",
             alpha=self.alpha,
-            l1_ratio=1.0,
+            l1_ratio=self.l1_ratio,
             fit_intercept=self.fit_intercept,
             n_iter=self.n_iter,
             shuffle=self.shuffle,
@@ -166,7 +170,9 @@ class SGDBolasso(BaseSelector, BaseEstimator):
             average=self.average
         )
 
-        super(SGDBolasso, self).__init__(bootstrap_fraction, self.sgd_logit, random_seed=random_seed, feature_importance_metric=feature_importance_metric, feature_importance_threshold=feature_importance_threshold)
+        super(SGDBolasso, self).__init__(bootstrap_fraction, self.sgd_logit, random_seed=random_seed,
+                                         feature_importance_metric=feature_importance_metric,
+                                         feature_importance_threshold=feature_importance_threshold)
 
     def _get_feature_coeff(self):
         return self.sgd_logit.coef_.flatten().tolist()

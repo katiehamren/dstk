@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import sys
 import time
+import warnings
 from DSTK.utils import sampling_helpers as sh
 from sklearn.metrics import precision_score, accuracy_score, recall_score, roc_auc_score
 
@@ -17,7 +18,11 @@ class BaseSelector(object):
     def _get_feature_coeff(self):
         raise NotImplementedError
 
-    def __init__(self, bootstrap_fraction, classifier, random_seed=None, feature_importance_metric=None, feature_importance_threshold=None):
+    def __init__(self, bootstrap_fraction, classifier,
+                 random_seed=None,
+                 feature_importance_metric=None,
+                 feature_importance_threshold=None):
+
         self.initialized = False
 
         self.num_bootstraps = 0
@@ -35,6 +40,11 @@ class BaseSelector(object):
         self.coeff_df = None
 
     def _get_feature_importance_metric_func(self):
+
+        if callable(self.feature_importance_metric):
+            warnings.warn('Using user-input feature importance metric function, not verifying its inputs')
+            return self.feature_importance_metric
+
         if self.feature_importance_metric == 'accuracy':
             return accuracy_score
         elif self.feature_importance_metric == 'recall':
